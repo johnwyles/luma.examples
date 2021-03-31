@@ -44,12 +44,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             "disk": {
                 "free": df.free,
                 "total": df.total,
-                "used_pct": df.percent
+                "used": df.used,
+                "used_pct": 100 - ((df.free / df.total) * 100)
             },
             "memory": {
                 "mem_used": mem.used,
-                "swap_used": swap.used,
                 "mem_used_pct": mem_used_pct,
+                "swap_used": swap.used
             },
             "network": {
                 "address": address,
