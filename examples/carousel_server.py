@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 input_data = {}
 
 
-def render_disk_memory(draw, width, height):
+def render_disk_memory_battery(draw, width, height):
     global input_data
     if not input_data:
         return
@@ -30,23 +30,26 @@ def render_disk_memory(draw, width, height):
     margin = 3
 
     title_text(draw, margin, width, text="Disk")
-    draw.text((margin, 20), text="Used:", font=tiny_font, fill="white")
-    draw.text((margin, 30), text="Free:", font=tiny_font, fill="white")
-    draw.text((margin, 40), text="Total:", font=tiny_font, fill="white")
+    draw.text((margin, 15), text="Used:", font=tiny_font, fill="white")
+    draw.text((margin, 25), text="Free:", font=tiny_font, fill="white")
+    draw.text((margin, 35), text="Total:", font=tiny_font, fill="white")
 
-    right_text(draw, 20, width, margin, text="{0:0.1f}%".format(input_data["disk"]["used_pct"]))
-    right_text(draw, 30, width, margin, text=bytes2human(input_data["disk"]["free"], "{0:0.0f}"))
-    right_text(draw, 40, width, margin, text=bytes2human(input_data["disk"]["total"], "{0:0.0f}"))
+    right_text(draw, 15, width, margin, text="{0:0.1f}%".format(input_data["disk"]["used_pct"]))
+    right_text(draw, 25, width, margin, text=bytes2human(input_data["disk"]["free"], "{0:0.0f}"))
+    right_text(draw, 35, width, margin, text=bytes2human(input_data["disk"]["total"], "{0:0.0f}"))
 
     x = (width - draw.textsize("Memory")[0]) / 2
-    draw.text((x, 55), text="Memory", fill="yellow")
-    draw.text((margin, 75), text="Used:", font=tiny_font, fill="white")
-    draw.text((margin, 85), text="Phys:", font=tiny_font, fill="white")
-    draw.text((margin, 95), text="Swap:", font=tiny_font, fill="white")
+    draw.text((x, 45), text="Memory", fill="yellow")
+    draw.text((margin, 60), text="Used:", font=tiny_font, fill="white")
+    draw.text((margin, 70), text="Phys:", font=tiny_font, fill="white")
+    draw.text((margin, 80), text="Swap:", font=tiny_font, fill="white")
 
-    right_text(draw, 75, width, margin, text="{0:0.1f}%".format(input_data["memory"]["mem_used_pct"]))
-    right_text(draw, 85, width, margin, text=bytes2human(input_data["memory"]["mem_used"]))
-    right_text(draw, 95, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
+    right_text(draw, 60, width, margin, text="{0:0.1f}%".format(input_data["memory"]["mem_used_pct"]))
+    right_text(draw, 70, width, margin, text=bytes2human(input_data["memory"]["mem_used"]))
+    right_text(draw, 80, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
+
+    draw.text((x, 90), text="Battery", fill="yellow")
+    draw.text((margin, 105), text="{} %".format(input_data["battery"]["battery_pct"]), font=tiny_font, fill="white")
 
 
 def vertical_bar(draw, x1, y1, x2, y2, yh):
@@ -67,18 +70,18 @@ def render_network_cpu(draw, width, height):
     title_text(draw, top_margin, width, "Net: wlan0")
     address = input_data["network"]["address"]
 
-    draw.text((margin, 20), text=address, font=tiny_font, fill="white")
-    draw.text((margin, 30), text="Rx:", font=tiny_font, fill="white")
-    draw.text((margin, 40), text="Tx:", font=tiny_font, fill="white")
-    right_text(draw, 30, width, margin, text=bytes2human(input_data["network"]["bytes_recv"]))
-    right_text(draw, 40, width, margin, text=bytes2human(input_data["network"]["bytes_sent"]))
+    draw.text((margin, 15), text=address, font=tiny_font, fill="white")
+    draw.text((margin, 25), text="Rx:", font=tiny_font, fill="white")
+    draw.text((margin, 35), text="Tx:", font=tiny_font, fill="white")
+    right_text(draw, 25, width, margin, text=bytes2human(input_data["network"]["bytes_recv"]))
+    right_text(draw, 35, width, margin, text=bytes2human(input_data["network"]["bytes_sent"]))
 
     x = (width - draw.textsize("CPU Load")[0]) / 2
-    draw.text((x, 55), text="CPU Load", fill="yellow")
-    bar_height = (height - 15 - top_margin - bottom_margin) / 2
+    draw.text((x, 45), text="CPU Load", fill="yellow")
+    bar_height = (height - 15 - top_margin - bottom_margin) / 1.7
     width_cpu = width / len(input_data["cpu"])
     bar_width = 0.5 * width_cpu
-    bar_margin = (width_cpu - bar_width) / 2
+    bar_margin = (width_cpu - bar_width) / 1.7
 
     x = bar_margin
 
@@ -105,7 +108,7 @@ def main():
             widget_width = device.width // 2
             widget_height = device.height
 
-            md = snapshot(widget_width, widget_height, render_disk_memory, interval=2.0)
+            md = snapshot(widget_width, widget_height, render_disk_memory_battery, interval=2.0)
             cpuwlan = snapshot(widget_width, widget_height, render_network_cpu, interval=0.5)
 
             virtual = viewport(device, width=device.width, height=device.height)
@@ -145,4 +148,3 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         pass
-

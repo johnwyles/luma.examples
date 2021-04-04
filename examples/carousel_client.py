@@ -6,7 +6,7 @@ import psutil
 import socket
 import time
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
+HOST = "192.168.1.9"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 SLEEP_INTERVAL = 0.5
 
@@ -39,6 +39,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             bytes_recv = psutil.net_io_counters(pernic=True)["en0"].bytes_recv
             bytes_sent = psutil.net_io_counters(pernic=True)["en0"].bytes_sent
 
+        battery_pct = ""
+        try:
+            battery_pct = psutil.sensors_battery().percent
+        except:
+            battery_pct = "100"
+
         send_data = {
             "cpu": cpu,
             "disk": {
@@ -55,6 +61,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 "address": address,
                 "bytes_recv": bytes_recv,
                 "bytes_sent": bytes_sent
+            },
+            "battery": {
+                "battery_pct": battery_pct
             }
         }
 
