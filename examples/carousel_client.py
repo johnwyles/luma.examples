@@ -50,7 +50,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             "disk": {
                 "free": df.free,
                 "total": df.total,
-                "used_pct": df.percent
+                "used_pct": (df.total - df.free) / df.free * 100
             },
             "memory": {
                 "mem_used": mem.used,
