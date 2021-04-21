@@ -49,7 +49,13 @@ def render_disk_memory_battery(draw, width, height):
     right_text(draw, 80, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
 
     draw.text((x, 90), text="Battery", fill="yellow")
-    draw.text((margin, 105), text="{} %".format(input_data["battery"]["battery_pct"]), font=tiny_font, fill="white")
+    battery_pct = input_data["battery"]["battery_pct"]
+    draw.text((margin, 105), text="{} %".format(battery_pct), font=tiny_font, fill="white")
+
+
+def horizontal_bar(draw, x1, y1, x2, y2, xw):
+    draw.rectangle((x1, y1) + (x2, y2), "black", "white")
+    draw.rectangle((xw, y1) + (x2, y2), "white", "white")
 
 
 def vertical_bar(draw, x1, y1, x2, y2, yh):
