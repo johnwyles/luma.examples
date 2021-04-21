@@ -39,7 +39,7 @@ def render_disk_memory_battery(draw, width, height):
     right_text(draw, 35, width, margin, text=bytes2human(input_data["disk"]["total"], "{0:0.0f}"))
 
     x = (width - draw.textsize("Memory")[0]) / 2
-    draw.text((x, 45), text="Memory", fill="red")
+    draw.text((x, 45), text="Memory", fill="orange")
     draw.text((margin, 60), text="Used:", font=tiny_font, fill="white")
     draw.text((margin, 70), text="Phys:", font=tiny_font, fill="white")
     draw.text((margin, 80), text="Swap:", font=tiny_font, fill="white")
@@ -48,7 +48,7 @@ def render_disk_memory_battery(draw, width, height):
     right_text(draw, 70, width, margin, text=bytes2human(input_data["memory"]["mem_used"]))
     right_text(draw, 80, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
 
-    draw.text((x, 90), text="Battery", fill="red")
+    draw.text((x, 90), text="Battery", fill="orange")
     battery_pct = input_data["battery"]["battery_pct"]
     draw.text((margin, 105), text="{} %".format(battery_pct), font=tiny_font, fill="white")
 
@@ -83,7 +83,7 @@ def render_network_cpu(draw, width, height):
     right_text(draw, 35, width, margin, text=bytes2human(input_data["network"]["bytes_sent"]))
 
     x = (width - draw.textsize("CPU Load")[0]) / 2
-    draw.text((x, 45), text="CPU Load", fill="red")
+    draw.text((x, 45), text="CPU Load", fill="orange")
     bar_height = (height - 15 - top_margin - bottom_margin) / 1.7
     width_cpu = width / len(input_data["cpu"])
     bar_width = 0.5 * width_cpu

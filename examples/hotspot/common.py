@@ -40,4 +40,4 @@ def right_text(draw, y, width, margin, text):
 
 def title_text(draw, y, width, text):
     x = (width - draw.textsize(text)[0]) / 2
-    draw.text((x, y), text=text, fill="red")
+    draw.text((x, y), text=text, fill="orange")
