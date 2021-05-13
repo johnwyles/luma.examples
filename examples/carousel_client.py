@@ -18,7 +18,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     while True:
         logging.info("Getting system data...")
-        cpu = psutil.cpu_percent(interval=None, percpu=True)
+        cpu_percent = psutil.cpu_percent(interval=None, percpu=False)
+        cpu_percent_each = psutil.cpu_percent(interval=None, percpu=True)
 
         mem = psutil.virtual_memory()
         swap = psutil.swap_memory()
@@ -54,7 +55,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             battery_pct = "100"
 
         send_data = {
-            "cpu": cpu,
+            "cpu": {
+                "cpu_percent": cpu_percent,
+                "cpu_percent_each": cpu_percent_each
+            },
             "disk": {
                 "free": df.free,
                 "total": df.total,

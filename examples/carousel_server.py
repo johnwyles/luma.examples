@@ -40,13 +40,13 @@ def render_disk_memory_battery(draw, width, height):
 
     x = (width - draw.textsize("Memory")[0]) / 2
     draw.text((x, 45), text="Memory", fill="yellow")
-    draw.text((margin, 60), text="Used:", font=tiny_font, fill="white")
-    draw.text((margin, 70), text="Phys:", font=tiny_font, fill="white")
-    draw.text((margin, 80), text="Swap:", font=tiny_font, fill="white")
+    draw.text((margin, 57), text="Used:", font=tiny_font, fill="white")
+    draw.text((margin, 67), text="Phys:", font=tiny_font, fill="white")
+    draw.text((margin, 77), text="Swap:", font=tiny_font, fill="white")
 
-    right_text(draw, 60, width, margin, text="{0:0.1f}%".format(input_data["memory"]["mem_used_pct"]))
-    right_text(draw, 70, width, margin, text=bytes2human(input_data["memory"]["mem_used"]))
-    right_text(draw, 80, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
+    right_text(draw, 57, width, margin, text="{0:0.1f}%".format(input_data["memory"]["mem_used_pct"]))
+    right_text(draw, 67, width, margin, text=bytes2human(input_data["memory"]["mem_used"]))
+    right_text(draw, 77, width, margin, text=bytes2human(input_data["memory"]["swap_used"]))
 
     draw.text((x, 90), text="Battery", fill="yellow")
     battery_pct = input_data["battery"]["battery_pct"]
@@ -84,14 +84,16 @@ def render_network_cpu(draw, width, height):
 
     x = (width - draw.textsize("CPU Load")[0]) / 2
     draw.text((x, 45), text="CPU Load", fill="yellow")
-    bar_height = (height - 15 - top_margin - bottom_margin) / 1.7
-    width_cpu = width / len(input_data["cpu"])
+    bar_height = (height - 15 - top_margin - bottom_margin) / 1.95
+    width_cpu = width / len(input_data["cpu"]["cpu_percent_each"])
     bar_width = 0.5 * width_cpu
-    bar_margin = (width_cpu - bar_width) / 1.7
+    bar_margin = (width_cpu - bar_width) / 1.95
 
+    cpu_percent_string = "{}%".format(str(input_data["cpu"]["cpu_percent"]))
+    x = (width - draw.textsize(cpu_percent_string)[0]) / 1.7
+    draw.text((x, 57), text=cpu_percent_string, font=tiny_font, fill="white")
     x = bar_margin
-
-    for cpu in input_data["cpu"]:
+    for cpu in input_data["cpu"]["cpu_percent_each"]:
         cpu_height = bar_height * (cpu / 100.0)
         y2 = height - bottom_margin
         vertical_bar(draw,
