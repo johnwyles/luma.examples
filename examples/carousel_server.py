@@ -73,7 +73,7 @@ def render_network_cpu(draw, width, height):
     top_margin = 3
     bottom_margin = 3
 
-    title_text(draw, top_margin, width, "Net: wlan0")
+    title_text(draw, top_margin, width, "Net: {}".format(input_data["network"]["interface_name"]))
     address = input_data["network"]["address"]
 
     draw.text((margin, 15), text=address, font=tiny_font, fill="white")

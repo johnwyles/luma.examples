@@ -33,11 +33,19 @@ class Carousel(hass.Hass):
                 bytes_recv = 0
                 bytes_sent = 0
                 counters = []
-                if "wlan0" in psutil.net_if_addrs():
+                interface_name = "unknown"
+                if "eth0" in psutil.net_if_addrs():
+                    interface_name = "eth0"
+                    address = psutil.net_if_addrs()["eth0"][0].address
+                    bytes_recv = psutil.net_io_counters(pernic=True)["eth0"].bytes_recv
+                    bytes_sent = psutil.net_io_counters(pernic=True)["eth0"].bytes_sent
+                elif "wlan0" in psutil.net_if_addrs():
+                    interface_name = "wlan0"
                     address = psutil.net_if_addrs()["wlan0"][0].address
                     bytes_recv = psutil.net_io_counters(pernic=True)["wlan0"].bytes_recv
                     bytes_sent = psutil.net_io_counters(pernic=True)["wlan0"].bytes_sent
                 elif "en0" in psutil.net_if_addrs():
+                    interface_name = "en0"
                     address = psutil.net_if_addrs()["en0"][0].address
                     bytes_recv = psutil.net_io_counters(pernic=True)["en0"].bytes_recv
                     bytes_sent = psutil.net_io_counters(pernic=True)["en0"].bytes_sent
@@ -61,6 +69,7 @@ class Carousel(hass.Hass):
                         "mem_used_pct": mem_used_pct,
                     },
                     "network": {
+                        "interface_name": interface_name,
                         "address": address,
                         "bytes_recv": bytes_recv,
                         "bytes_sent": bytes_sent
