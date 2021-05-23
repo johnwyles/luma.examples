@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 import appdaemon.plugins.hass.hassapi as hass
 import json
 import logging
@@ -6,19 +7,32 @@ import psutil
 import socket
 import time
 
-SERVER_HOST = "192.168.1.9"  # The server's hostname or IP address
-SERVER_PORT = 65432  # The port used by the server
-SLEEP_INTERVAL = 0.5
+SERVER_HOST = "192.168.1.9"  # Servers hostname or IP address
+SERVER_PORT = 65432  # Port used by the server
+MAX_SLEEP_INTERVAL = 60  # Maximum time to back off when retrying to send data
+SLEEP_INTERVAL = 0.5  # How often we want to send data
+SLEEP_BACKOFF_COEFICENT = 2  # Multiplier to back off each unsuccessful iteration
 
 
 class Carousel(hass.Hass):
 
     def initialize(self):
+        sleep_interval = SLEEP_INTERVAL
+
         logging.basicConfig(level=logging.INFO)
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            logging.info('Connecting: {} : {}'.format(SERVER_HOST, SERVER_PORT))
-            s.connect((SERVER_HOST, SERVER_PORT))
+            while True:
+                try:
+                    logging.info('Connecting to {}:{}'.format(SERVER_HOST, SERVER_PORT))
+                    s.connect((SERVER_HOST, SERVER_PORT))
+                    logging.info('Connected.')
+                    sleep_interval = SLEEP_INTERVAL
+                    break
+                except:
+                    sleep_interval = min(sleep_interval * SLEEP_BACKOFF_COEFICENT, MAX_SLEEP_INTERVAL)
+                    logging.error('Error trying to connect. Retrying in {} seconds.'.format(sleep_interval))
+                    time.sleep(sleep_interval)
 
             while True:
                 logging.info("Getting system data...")
@@ -101,13 +115,18 @@ class Carousel(hass.Hass):
                 logging.info('Waiting for OK...')
 
                 # Acknowledged
-                data = s.recv(1024).decode('utf-8')
-                if data != 'OK':
-                    logging.error('Not OK.')
-                    break
-                logging.info('Received OK.')
+                try:
+                    data = s.recv(1024).decode('utf-8')
+                    if data != 'OK':
+                        logging.error('Receving something other than "OK": {}'.format(data))
+                        break
+                    logging.info('Received OK.')
+                    sleep_interval = SLEEP_INTERVAL
+                except:
+                    logging.error('Something went wrong. Trying again...')
+                    sleep_interval = min(sleep_interval * SLEEP_BACKOFF_COEFICENT, MAX_SLEEP_INTERVAL)
 
                 # Wait
-                time.sleep(SLEEP_INTERVAL)
+                time.sleep(sleep_interval)
 
         print("Received", repr(data))
