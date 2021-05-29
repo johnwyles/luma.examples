@@ -3,7 +3,6 @@
 
 import json
 import logging
-import psutil
 import socket
 import time
 
