@@ -4,7 +4,6 @@
 import json
 import logging
 import socket
-import time
 
 from demo_opts import get_device
 from luma.core.virtual import viewport, snapshot, hotspot
